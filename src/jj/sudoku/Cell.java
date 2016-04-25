@@ -1,5 +1,7 @@
 package jj.sudoku;
 
+import java.awt.Graphics;
+
 import jj.sudoku.graphics.GameBoard;
 
 public class Cell {
@@ -42,4 +44,16 @@ public class Cell {
 		return this.active;
 	}
 
+	public int getXArrayPos() {
+		return (this.x - GameBoard.OFFSET) / this.cellSize;
+	}
+
+	public int getYArrayPos() {
+		return (this.y - GameBoard.OFFSET) / this.cellSize;
+	}
+
+	public void draw(Graphics g) {
+		g.drawRect(getX(), getY(), this.cellSize, this.cellSize);
+
+	}
 }

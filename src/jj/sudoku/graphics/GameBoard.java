@@ -21,6 +21,8 @@ public class GameBoard extends JPanel implements MouseListener, KeyListener {
 	private int boardsize = 0;
 	private int cellsize = 0;
 	private Cell[][] grid;
+	private Cell[] vertRow;
+	private Cell[] horRow;
 	private Cell prevCell = null;
 
 	public GameBoard(int width, int height) {
@@ -42,11 +44,24 @@ public class GameBoard extends JPanel implements MouseListener, KeyListener {
 			g.drawLine(OFFSET, i * this.cellsize + OFFSET, this.boardsize + OFFSET, i * this.cellsize + OFFSET);
 		}
 
+		for (Cell cell : this.horRow) {
+			if (cell != null) {
+				g.setColor(Color.blue);
+				cell.draw(g);
+			}
+		}
+		for (Cell cell : this.vertRow) {
+			if (cell != null) {
+				g.setColor(Color.blue);
+				cell.draw(g);
+			}
+		}
+
 		for (Cell[] xRow : this.grid) {
 			for (Cell cell : xRow) {
 				if (cell.isActive()) {
 					g.setColor(Color.red);
-					g.drawRect(cell.getX(), cell.getY(), cell.getCellSize(), cell.getCellSize());
+					cell.draw(g);
 					break;
 				}
 			}
@@ -72,6 +87,7 @@ public class GameBoard extends JPanel implements MouseListener, KeyListener {
 
 			Cell cell = this.grid[xSec][ySec];
 			cell.setActive(true);
+			calculateAffectedCells(cell);
 			if (this.prevCell == null) {
 				this.prevCell = cell;
 			} else {
@@ -81,6 +97,14 @@ public class GameBoard extends JPanel implements MouseListener, KeyListener {
 			repaint();
 		}
 		System.out.println("X: " + e.getX() + "Y: " + e.getY());
+
+	}
+
+	private void calculateAffectedCells(Cell cell) {
+		for (int i = 0; i < this.grid.length; i++) {
+			this.horRow[i] = this.grid[i][cell.getYArrayPos()];
+			this.vertRow[i] = this.grid[cell.getXArrayPos()][i];
+		}
 
 	}
 
@@ -128,6 +152,8 @@ public class GameBoard extends JPanel implements MouseListener, KeyListener {
 
 	public void setGrid(Cell[][] grid) {
 		this.grid = grid;
+		this.vertRow = new Cell[grid.length];
+		this.horRow = new Cell[grid.length];
 
 	}
 
