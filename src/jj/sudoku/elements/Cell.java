@@ -53,7 +53,7 @@ public class Cell implements GraphicElement {
 
 	@Override
 	public void drawMe(Graphics g, Color c) {
-		g.setColor(this.stdColor);
+		g.setColor(c);
 		g.drawRect(getX(), getY(), GameConstants.CELLSIZE, GameConstants.CELLSIZE);
 
 	}

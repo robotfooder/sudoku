@@ -19,8 +19,7 @@ public class Row implements GraphicElement {
 		g.setColor(c);
 		for (Cell cell : this.rowArray) {
 			if (cell != null) {
-				g.setColor(Color.blue);
-				cell.drawMe(g);
+				cell.drawMe(g, this.stdColor);
 			}
 		}
 

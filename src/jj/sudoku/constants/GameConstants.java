@@ -10,4 +10,8 @@ public class GameConstants {
 		HORIZONATAL, VERTICAL;
 	}
 
+	public enum ElementType {
+		GRID, VERTICAL_ROW, HORIZONTAL_ROW, ACTIVE_CELL;
+	}
+
 }
