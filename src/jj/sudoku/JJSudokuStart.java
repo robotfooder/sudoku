@@ -6,38 +6,28 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import jj.sudoku.constants.GameConstants;
+import jj.sudoku.game.GamePlay;
 import jj.sudoku.graphics.GameBoard;
 
 public class JJSudokuStart {
-
-	public static int SCREEN_WIDTH = 535;
-	public static int SCREEN_HEIGHT = 600;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				Cell[][] grid = new Cell[9][9];
-				int cellsize = (SCREEN_WIDTH - GameBoard.OFFSET * 2) / 9;
-
-				GameBoard board = loadScreen();
-
-				initGame(cellsize, grid);
-				board.setGrid(grid);
+				GamePlay game = initElements();
+				loadScreen(game);
 
 			}
 
-			private void initGame(int cellSize, Cell[][] grid) {
-
-				for (int x = 0; x < grid.length; x++) {
-					for (int y = 0; y < grid.length; y++) {
-						grid[x][y] = new Cell(x, y, cellSize);
-					}
-				}
+			private GamePlay initElements() {
+				GamePlay game = new GamePlay();
+				return game;
 
 			}
 
-			private GameBoard loadScreen() {
+			private void loadScreen(GamePlay game) {
 				try {
 					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				} catch (ClassNotFoundException e) {
@@ -53,17 +43,17 @@ public class JJSudokuStart {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-				GameBoard board = new GameBoard(SCREEN_WIDTH, SCREEN_HEIGHT);
+				int screenHeight = GameConstants.CELLS * GameConstants.CELLSIZE + GameConstants.OFFSET * 3;
+				int screenWIdth = GameConstants.CELLS * GameConstants.CELLSIZE + GameConstants.OFFSET * 3;
+				GameBoard board = new GameBoard(game);
 				JFrame window = new JFrame();
-				window.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+				window.setSize(screenWIdth, screenHeight);
 				window.setResizable(false);
 				window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				window.add(board);
 				window.setVisible(true);
 				window.addMouseListener(board);
 				window.addKeyListener(board);
-				return board;
 
 			}
 		});
