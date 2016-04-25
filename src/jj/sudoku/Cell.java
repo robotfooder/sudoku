@@ -9,8 +9,8 @@ public class Cell {
 	boolean active = false;
 
 	public Cell(int x, int y, int cellSize) {
-		this.x = GameBoard.OFFSET + x;
-		this.y = GameBoard.OFFSET + y;
+		this.x = GameBoard.OFFSET + x * cellSize;
+		this.y = GameBoard.OFFSET + y * cellSize;
 		this.cellSize = cellSize;
 	}
 

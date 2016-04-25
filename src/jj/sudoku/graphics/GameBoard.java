@@ -2,15 +2,16 @@ package jj.sudoku.graphics;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.List;
 
 import javax.swing.JPanel;
 
 import jj.sudoku.Cell;
 
-public class GameBoard extends JPanel implements MouseListener {
+public class GameBoard extends JPanel implements MouseListener, KeyListener {
 
 	/**
 	 *
@@ -19,7 +20,7 @@ public class GameBoard extends JPanel implements MouseListener {
 	public static int OFFSET = 20;
 	private int boardsize = 0;
 	private int cellsize = 0;
-	private List<List<Cell>> grid;
+	private Cell[][] grid;
 	private Cell prevCell = null;
 
 	public GameBoard(int width, int height) {
@@ -41,8 +42,8 @@ public class GameBoard extends JPanel implements MouseListener {
 			g.drawLine(OFFSET, i * this.cellsize + OFFSET, this.boardsize + OFFSET, i * this.cellsize + OFFSET);
 		}
 
-		for (List<Cell> yrow : this.grid) {
-			for (Cell cell : yrow) {
+		for (Cell[] xRow : this.grid) {
+			for (Cell cell : xRow) {
 				if (cell.isActive()) {
 					g.setColor(Color.red);
 					g.drawRect(cell.getX(), cell.getY(), cell.getCellSize(), cell.getCellSize());
@@ -68,8 +69,8 @@ public class GameBoard extends JPanel implements MouseListener {
 		}
 		if (xSec >= 0 && ySec >= 0) {
 			System.out.println("xSec: " + xSec + "ySec: " + ySec);
-			List<Cell> yRow = this.grid.get(ySec);
-			Cell cell = yRow.get(xSec);
+
+			Cell cell = this.grid[xSec][ySec];
 			cell.setActive(true);
 			if (this.prevCell == null) {
 				this.prevCell = cell;
@@ -107,7 +108,25 @@ public class GameBoard extends JPanel implements MouseListener {
 
 	}
 
-	public void setGrid(List<List<Cell>> grid) {
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setGrid(Cell[][] grid) {
 		this.grid = grid;
 
 	}

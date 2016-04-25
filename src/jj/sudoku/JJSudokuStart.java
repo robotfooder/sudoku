@@ -1,8 +1,6 @@
 package jj.sudoku;
 
 import java.awt.EventQueue;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -19,7 +17,7 @@ public class JJSudokuStart {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				List<List<Cell>> grid = new ArrayList<List<Cell>>();
+				Cell[][] grid = new Cell[9][9];
 				int cellsize = (SCREEN_WIDTH - GameBoard.OFFSET * 2) / 9;
 
 				GameBoard board = loadScreen();
@@ -29,14 +27,12 @@ public class JJSudokuStart {
 
 			}
 
-			private void initGame(int cellSize, List<List<Cell>> grid) {
-				List<Cell> row = null;
-				for (int y = 0; y < 9; y++) {
-					row = new ArrayList<Cell>();
-					for (int x = 0; x < 9; x++) {
-						row.add(new Cell(x * cellSize, y * cellSize, cellSize));
+			private void initGame(int cellSize, Cell[][] grid) {
+
+				for (int x = 0; x < grid.length; x++) {
+					for (int y = 0; y < grid.length; y++) {
+						grid[x][y] = new Cell(x, y, cellSize);
 					}
-					grid.add(row);
 				}
 
 			}
@@ -66,6 +62,7 @@ public class JJSudokuStart {
 				window.add(board);
 				window.setVisible(true);
 				window.addMouseListener(board);
+				window.addKeyListener(board);
 				return board;
 
 			}
