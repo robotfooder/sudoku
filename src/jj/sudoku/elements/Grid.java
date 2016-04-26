@@ -41,7 +41,7 @@ public class Grid implements GraphicElement {
 
 	}
 
-	public Cell getCell(int x, int y) {
+	public Cell getCellByCoordinates(int x, int y) {
 		int xSec = -1;
 		int ySec = -1;
 		if (x - GameConstants.OFFSET >= 0) {
@@ -54,7 +54,12 @@ public class Grid implements GraphicElement {
 			return this.gridArray[xSec][ySec];
 
 		}
+
 		return null;
+	}
+
+	public Cell getCell(int x, int y) {
+		return this.gridArray[x][y];
 	}
 
 	public Cell[] getRow(Cell cell, Direction dir) {

@@ -10,6 +10,10 @@ public class Section implements GraphicElement {
 	private Cell[] sectionArray;
 	private Color stdColor = Color.green;
 
+	public Section(Cell[] sectionGrid) {
+		this.sectionArray = sectionGrid;
+	}
+
 	@Override
 	public void drawMe(Graphics g, Color c) {
 		g.setColor(c);

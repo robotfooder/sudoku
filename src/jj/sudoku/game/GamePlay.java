@@ -31,8 +31,20 @@ public class GamePlay {
 
 	private void loadSections() {
 		Grid grid = this.getGrid();
+		int row = 0;
+		int col = 0;
 		for (int n = 0; n < GameConstants.CELLS; n++) {
-			this.sectionArray[n] = new Section();
+			col = (n / 3) * 3;
+			row = (n % 3) * 3;
+			Cell[] sectionGrid = new Cell[GameConstants.CELLS];
+			int count = 0;
+			for (int x = col; x < col + 3; x++) {
+				for (int y = row; y < row + 3; y++) {
+					sectionGrid[count] = grid.getCell(x, y);
+					count++;
+				}
+			}
+			this.sectionArray[n] = new Section(sectionGrid);
 		}
 
 	}
@@ -45,12 +57,12 @@ public class GamePlay {
 
 		System.out.println("X: " + e.getX() + "Y: " + e.getY());
 		Grid grid = getGrid();
-		Cell cell = grid.getCell(e.getX(), e.getY());
+		Cell cell = grid.getCellByCoordinates(e.getX(), e.getY());
 		if (cell != null) {
 			cell.printMe();
 			cell.setActive(true);
-			this.elementsMap.put(ElementType.ACTIVE_CELL, cell);
 			calculateAffectedCells(cell);
+			this.elementsMap.put(ElementType.ACTIVE_CELL, cell);
 			if (this.prevCell == null) {
 				this.prevCell = cell;
 			} else {
@@ -70,7 +82,15 @@ public class GamePlay {
 		horRow.setRowArray(rowArray);
 		rowArray = grid.getRow(cell, Direction.VERTICAL);
 		vertRow.setRowArray(rowArray);
+		this.elementsMap.put(ElementType.ACTIVE_SECTION, this.getActiveSection(cell));
 
+	}
+
+	private Section getActiveSection(Cell cell) {
+		int rowSection = cell.getYArrayPos() / 3;
+		int colSection = cell.getXArrayPos() / 3;
+		int arrayPos = rowSection * 1 + 3 * colSection;
+		return this.sectionArray[arrayPos];
 	}
 
 	public void drawElements(Graphics g) {
