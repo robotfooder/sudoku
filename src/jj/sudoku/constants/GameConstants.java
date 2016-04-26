@@ -11,7 +11,7 @@ public class GameConstants {
 	}
 
 	public enum ElementType {
-		GRID, VERTICAL_ROW, HORIZONTAL_ROW, ACTIVE_CELL;
+		GRID, VERTICAL_ROW, HORIZONTAL_ROW, ACTIVE_CELL, ACTIVE_SECTION;
 	}
 
 }

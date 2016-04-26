@@ -55,6 +55,10 @@ public class Cell implements GraphicElement {
 	public void drawMe(Graphics g, Color c) {
 		g.setColor(c);
 		g.drawRect(getX(), getY(), GameConstants.CELLSIZE, GameConstants.CELLSIZE);
+		if (this.value != 0) {
+			g.drawString(String.valueOf(this.value), this.getX() + GameConstants.CELLSIZE / 2,
+					this.getY() + GameConstants.CELLSIZE / 2);
+		}
 
 	}
 

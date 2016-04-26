@@ -69,7 +69,20 @@ public class GameBoard extends JPanel implements MouseListener, KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
+		int keyCode = e.getKeyCode();
+		if (keyCode == KeyEvent.VK_DELETE) {
+			this.game.tick(0);
+			repaint();
+		} else {
+			char key = e.getKeyChar();
+
+			int keyValue = isNumeric(String.valueOf(key));
+			if (keyValue != -1) {
+				System.out.println(String.valueOf(key));
+				this.game.tick(keyValue);
+				repaint();
+			}
+		}
 
 	}
 
@@ -77,6 +90,21 @@ public class GameBoard extends JPanel implements MouseListener, KeyListener {
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public int isNumeric(String key) {
+		int n = -1;
+		try {
+			n = Integer.parseInt(key);
+			if (n < 1 || n > 9) {
+				System.out.println("Invalid number");
+				return n;
+			}
+		} catch (NumberFormatException nFE) {
+			System.out.println("Not an Integer");
+			return n;
+		}
+		return n;
 	}
 
 }
