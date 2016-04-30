@@ -16,11 +16,11 @@ import jj.sudoku.elements.Cell;
 import jj.sudoku.elements.Grid;
 import jj.sudoku.elements.Row;
 import jj.sudoku.elements.Section;
-import jj.sudoku.graphics.GraphicElement;
+import jj.sudoku.graphics.GameElement;
 
 public class GamePlay {
 
-	Map<ElementType, GraphicElement> elementsMap = new LinkedHashMap<ElementType, GraphicElement>();
+	Map<ElementType, GameElement> elementsMap = new LinkedHashMap<ElementType, GameElement>();
 	Section[] sectionArray = new Section[GameConstants.CELLS];
 
 	private Cell prevCell = null;
@@ -99,8 +99,8 @@ public class GamePlay {
 		for (Cell cell : this.numberedCells) {
 			cell.drawMe(g, Color.black);
 		}
-		for (Map.Entry<ElementType, GraphicElement> entry : this.elementsMap.entrySet()) {
-			GraphicElement element = entry.getValue();
+		for (Map.Entry<ElementType, GameElement> entry : this.elementsMap.entrySet()) {
+			GameElement element = entry.getValue();
 			element.drawMe(g);
 		}
 
@@ -111,6 +111,7 @@ public class GamePlay {
 		activeCell.setValue(keyValue);
 		if (keyValue > 0) {
 			this.numberedCells.add(activeCell);
+			updateAffectedCells(keyValue);
 		} else {
 			// remove number from cell
 			Iterator<Cell> iter = this.numberedCells.iterator();
@@ -121,6 +122,14 @@ public class GamePlay {
 				}
 			}
 		}
+	}
+
+	private void updateAffectedCells(int number) {
+		for (Map.Entry<ElementType, GameElement> entry : this.elementsMap.entrySet()) {
+			GameElement element = entry.getValue();
+			element.removePossibleNumber(number);
+		}
+
 	}
 
 }

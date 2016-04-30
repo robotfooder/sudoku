@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import jj.sudoku.constants.GameConstants;
-import jj.sudoku.graphics.GraphicElement;
+import jj.sudoku.graphics.GameElement;
 
-public class Row implements GraphicElement {
+public class Row implements GameElement {
 	private Cell[] rowArray;
 	private Color stdColor = Color.blue;
 
@@ -33,6 +33,14 @@ public class Row implements GraphicElement {
 
 	public void setRowArray(Cell[] rowArray) {
 		this.rowArray = rowArray;
+
+	}
+
+	@Override
+	public void removePossibleNumber(int number) {
+		for (Cell cell : this.rowArray) {
+			cell.removePossibleNumber(number);
+		}
 
 	}
 

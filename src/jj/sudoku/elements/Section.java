@@ -3,9 +3,9 @@ package jj.sudoku.elements;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import jj.sudoku.graphics.GraphicElement;
+import jj.sudoku.graphics.GameElement;
 
-public class Section implements GraphicElement {
+public class Section implements GameElement {
 
 	private Cell[] sectionArray;
 	private Color stdColor = Color.green;
@@ -33,6 +33,14 @@ public class Section implements GraphicElement {
 
 	public void setSectionArray(Cell[] sectionArray) {
 		this.sectionArray = sectionArray;
+	}
+
+	@Override
+	public void removePossibleNumber(int number) {
+		for (Cell cell : this.sectionArray) {
+			cell.removePossibleNumber(number);
+		}
+
 	}
 
 }

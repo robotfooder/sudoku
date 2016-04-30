@@ -5,9 +5,9 @@ import java.awt.Graphics;
 
 import jj.sudoku.constants.GameConstants;
 import jj.sudoku.constants.GameConstants.Direction;
-import jj.sudoku.graphics.GraphicElement;
+import jj.sudoku.graphics.GameElement;
 
-public class Grid implements GraphicElement {
+public class Grid implements GameElement {
 
 	Cell[][] gridArray = new Cell[GameConstants.CELLS][GameConstants.CELLS];
 	private int gridSize;
@@ -74,6 +74,12 @@ public class Grid implements GraphicElement {
 
 		}
 		return row;
+	}
+
+	@Override
+	public void removePossibleNumber(int Number) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
