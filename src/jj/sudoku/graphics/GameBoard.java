@@ -1,85 +1,39 @@
 package jj.sudoku.graphics;
 
-import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.List;
 
 import javax.swing.JPanel;
 
-import jj.sudoku.Cell;
+import jj.sudoku.game.GamePlay;
 
-public class GameBoard extends JPanel implements MouseListener {
+public class GameBoard extends JPanel implements MouseListener, KeyListener {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = -433695877996672967L;
-	public static int OFFSET = 20;
-	private int boardsize = 0;
-	private int cellsize = 0;
-	private List<List<Cell>> grid;
-	private Cell prevCell = null;
 
-	public GameBoard(int width, int height) {
+	private GamePlay game;
 
-		this.boardsize = width - OFFSET * 2;
-
-		this.cellsize = this.boardsize / 9;
-		System.out.println("boardsize: " + this.boardsize);
-		System.out.println("cellsize: " + this.cellsize);
-
+	public GameBoard(GamePlay game) {
+		this.game = game;
 	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawRect(OFFSET, OFFSET, this.boardsize, this.boardsize);
-		for (int i = 1; i * this.cellsize <= this.boardsize; i++) {
-			g.drawLine(i * this.cellsize + OFFSET, OFFSET, i * this.cellsize + OFFSET, this.boardsize + OFFSET);
-			g.drawLine(OFFSET, i * this.cellsize + OFFSET, this.boardsize + OFFSET, i * this.cellsize + OFFSET);
-		}
+		this.game.drawElements(g);
 
-		for (List<Cell> yrow : this.grid) {
-			for (Cell cell : yrow) {
-				if (cell.isActive()) {
-					g.setColor(Color.red);
-					g.drawRect(cell.getX(), cell.getY(), cell.getCellSize(), cell.getCellSize());
-					break;
-				}
-			}
-		}
-	}
-
-	public int getCellsize() {
-		return this.cellsize;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		int xSec = -1;
-		int ySec = -1;
-		if (e.getX() - GameBoard.OFFSET >= 0) {
-			xSec = (e.getX() - GameBoard.OFFSET) / this.cellsize;
-		}
-		if (e.getY() - GameBoard.OFFSET >= 0) {
-			ySec = (e.getY() - GameBoard.OFFSET * 2) / this.cellsize;
-		}
-		if (xSec >= 0 && ySec >= 0) {
-			System.out.println("xSec: " + xSec + "ySec: " + ySec);
-			List<Cell> yRow = this.grid.get(ySec);
-			Cell cell = yRow.get(xSec);
-			cell.setActive(true);
-			if (this.prevCell == null) {
-				this.prevCell = cell;
-			} else {
-				this.prevCell.setActive(false);
-				this.prevCell = cell;
-			}
-			repaint();
-		}
-		System.out.println("X: " + e.getX() + "Y: " + e.getY());
+		this.game.tick(e);
+		repaint();
 
 	}
 
@@ -107,9 +61,50 @@ public class GameBoard extends JPanel implements MouseListener {
 
 	}
 
-	public void setGrid(List<List<Cell>> grid) {
-		this.grid = grid;
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		if (keyCode == KeyEvent.VK_BACK_SPACE) {
+			this.game.tick(0);
+			repaint();
+		} else {
+			char key = e.getKeyChar();
+
+			int keyValue = isNumeric(String.valueOf(key));
+			if (keyValue != -1) {
+				System.out.println(String.valueOf(key));
+				this.game.tick(keyValue);
+				repaint();
+			}
+		}
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public int isNumeric(String key) {
+		int n = -1;
+		try {
+			n = Integer.parseInt(key);
+			if (n < 1 || n > 9) {
+				System.out.println("Invalid number");
+				return n;
+			}
+		} catch (NumberFormatException nFE) {
+			System.out.println("Not an Integer");
+			return n;
+		}
+		return n;
 	}
 
 }
