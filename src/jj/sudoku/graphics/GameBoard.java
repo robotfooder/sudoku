@@ -70,7 +70,7 @@ public class GameBoard extends JPanel implements MouseListener, KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
-		if (keyCode == KeyEvent.VK_DELETE) {
+		if (keyCode == KeyEvent.VK_BACK_SPACE) {
 			this.game.tick(0);
 			repaint();
 		} else {

@@ -8,8 +8,8 @@ import jj.sudoku.graphics.GraphicElement;
 
 public class Cell implements GraphicElement {
 
-	private int x, y, value;
-
+	private int x, y;
+	private int value = 0;
 	boolean active = false;
 	private Color stdColor = Color.red;
 
@@ -25,14 +25,6 @@ public class Cell implements GraphicElement {
 
 	public int getY() {
 		return this.y;
-	}
-
-	public int getValue() {
-		return this.value;
-	}
-
-	public void setValue(int value) {
-		this.value = value;
 	}
 
 	public void setActive(boolean b) {
@@ -55,9 +47,10 @@ public class Cell implements GraphicElement {
 	public void drawMe(Graphics g, Color c) {
 		g.setColor(c);
 		g.drawRect(getX(), getY(), GameConstants.CELLSIZE, GameConstants.CELLSIZE);
-		if (this.value != 0) {
-			g.drawString(String.valueOf(this.value), this.getX() + GameConstants.CELLSIZE / 2,
-					this.getY() + GameConstants.CELLSIZE / 2);
+		if (this.value > 0) {
+			g.setFont(GameConstants.font);
+			g.drawString(String.valueOf(this.value), this.getX() + (GameConstants.font.getSize() / 3),
+					this.getY() + GameConstants.font.getSize());
 		}
 
 	}
@@ -71,5 +64,13 @@ public class Cell implements GraphicElement {
 		System.out.println("Horizontal Cell: " + (this.getX() - GameConstants.OFFSET) / GameConstants.CELLSIZE);
 		System.out.println("Vertical Cell: " + (this.getY() - GameConstants.OFFSET) / GameConstants.CELLSIZE);
 
+	}
+
+	public int getValue() {
+		return this.value;
+	}
+
+	public void setValue(int value) {
+		this.value = value;
 	}
 }

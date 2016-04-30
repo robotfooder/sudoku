@@ -1,8 +1,12 @@
 package jj.sudoku.game;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import jj.sudoku.constants.GameConstants;
@@ -20,6 +24,7 @@ public class GamePlay {
 	Section[] sectionArray = new Section[GameConstants.CELLS];
 
 	private Cell prevCell = null;
+	private List<Cell> numberedCells = new ArrayList<Cell>();
 
 	public GamePlay() {
 
@@ -69,9 +74,7 @@ public class GamePlay {
 				this.prevCell.setActive(false);
 				this.prevCell = cell;
 			}
-
 		}
-
 	}
 
 	private void calculateAffectedCells(Cell cell) {
@@ -83,7 +86,6 @@ public class GamePlay {
 		rowArray = grid.getRow(cell, Direction.VERTICAL);
 		vertRow.setRowArray(rowArray);
 		this.elementsMap.put(ElementType.ACTIVE_SECTION, this.getActiveSection(cell));
-
 	}
 
 	private Section getActiveSection(Cell cell) {
@@ -94,6 +96,9 @@ public class GamePlay {
 	}
 
 	public void drawElements(Graphics g) {
+		for (Cell cell : this.numberedCells) {
+			cell.drawMe(g, Color.black);
+		}
 		for (Map.Entry<ElementType, GraphicElement> entry : this.elementsMap.entrySet()) {
 			GraphicElement element = entry.getValue();
 			element.drawMe(g);
@@ -104,7 +109,18 @@ public class GamePlay {
 	public void tick(int keyValue) {
 		Cell activeCell = (Cell) this.elementsMap.get(ElementType.ACTIVE_CELL);
 		activeCell.setValue(keyValue);
-
+		if (keyValue > 0) {
+			this.numberedCells.add(activeCell);
+		} else {
+			// remove number from cell
+			Iterator<Cell> iter = this.numberedCells.iterator();
+			while (iter.hasNext()) {
+				if (iter.next().equals(activeCell)) {
+					iter.remove();
+					break;
+				}
+			}
+		}
 	}
 
 }
