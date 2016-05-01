@@ -16,6 +16,7 @@ import jj.sudoku.elements.Cell;
 import jj.sudoku.elements.Grid;
 import jj.sudoku.elements.Row;
 import jj.sudoku.elements.Section;
+import jj.sudoku.elements.SectionElement;
 import jj.sudoku.graphics.GameElement;
 
 public class GamePlay {
@@ -25,6 +26,7 @@ public class GamePlay {
 
 	private Cell prevCell = null;
 	private List<Cell> numberedCells = new ArrayList<Cell>();
+	private List<Cell> onlyOnePossibleCells = new ArrayList<Cell>();
 
 	public GamePlay() {
 
@@ -82,9 +84,9 @@ public class GamePlay {
 		Cell[] rowArray = grid.getRow(cell, Direction.HORIZONATAL);
 		Row horRow = (Row) this.elementsMap.get(ElementType.HORIZONTAL_ROW);
 		Row vertRow = (Row) this.elementsMap.get(ElementType.VERTICAL_ROW);
-		horRow.setRowArray(rowArray);
+		horRow.setSectionArray(rowArray);
 		rowArray = grid.getRow(cell, Direction.VERTICAL);
-		vertRow.setRowArray(rowArray);
+		vertRow.setSectionArray(rowArray);
 		this.elementsMap.put(ElementType.ACTIVE_SECTION, this.getActiveSection(cell));
 	}
 
@@ -104,16 +106,25 @@ public class GamePlay {
 			element.drawMe(g);
 		}
 
+		for (Cell cell : this.onlyOnePossibleCells) {
+			cell.drawMe(g, Color.MAGENTA);
+		}
+
 	}
 
 	public void tick(int keyValue) {
 		Cell activeCell = (Cell) this.elementsMap.get(ElementType.ACTIVE_CELL);
-		activeCell.setValue(keyValue);
+
 		if (keyValue > 0) {
-			this.numberedCells.add(activeCell);
-			updateAffectedCells(keyValue);
+			if (activeCell.setValue(keyValue)) {
+				this.numberedCells.add(activeCell);
+				updateAffectedCellsAdd(keyValue);
+			}
 		} else {
 			// remove number from cell
+			updateAffectedCellsRemove(activeCell.getValue());
+			activeCell.clearValue();
+			setPossibleNumbersForCell(activeCell);
 			Iterator<Cell> iter = this.numberedCells.iterator();
 			while (iter.hasNext()) {
 				if (iter.next().equals(activeCell)) {
@@ -122,9 +133,40 @@ public class GamePlay {
 				}
 			}
 		}
+		this.onlyOnePossibleCells.clear();
+		Grid grid = this.getGrid();
+		for (int x = 0; x < GameConstants.CELLS; x++) {
+			for (int y = 0; y < GameConstants.CELLS; y++) {
+				Cell cell = grid.getCell(x, y);
+				if (cell.onlyOnePossible()) {
+					this.onlyOnePossibleCells.add(cell);
+				}
+
+			}
+		}
 	}
 
-	private void updateAffectedCells(int number) {
+	private void setPossibleNumbersForCell(Cell activeCell) {
+		activeCell.makeAllNumbersPossible();
+		for (Map.Entry<ElementType, GameElement> entry : this.elementsMap.entrySet()) {
+			GameElement element = entry.getValue();
+			if (element instanceof SectionElement) {
+				SectionElement section = (SectionElement) element;
+				activeCell.removePossibleNumbers(section.getTakenNumberForSection());
+			}
+		}
+
+	}
+
+	private void updateAffectedCellsRemove(int number) {
+		for (Map.Entry<ElementType, GameElement> entry : this.elementsMap.entrySet()) {
+			GameElement element = entry.getValue();
+			element.addPossibleNumber(number);
+		}
+
+	}
+
+	private void updateAffectedCellsAdd(int number) {
 		for (Map.Entry<ElementType, GameElement> entry : this.elementsMap.entrySet()) {
 			GameElement element = entry.getValue();
 			element.removePossibleNumber(number);

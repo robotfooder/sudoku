@@ -9,6 +9,8 @@ public interface GameElement {
 
 	public void drawMe(Graphics g);
 
-	void removePossibleNumber(int number);
+	public void removePossibleNumber(int number);
+
+	public void addPossibleNumber(int number);
 
 }

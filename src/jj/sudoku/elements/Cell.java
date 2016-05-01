@@ -20,9 +20,16 @@ public class Cell implements GameElement {
 	public Cell(int x, int y) {
 		this.x = GameConstants.OFFSET + x * GameConstants.CELLSIZE;
 		this.y = GameConstants.OFFSET + y * GameConstants.CELLSIZE;
+		initPossibleNumbers();
+
+	}
+
+	private void initPossibleNumbers() {
+		this.possibleNumbers.clear();
 		for (int n = 1; n <= GameConstants.CELLS; n++) {
 			this.possibleNumbers.add(n);
 		}
+
 	}
 
 	public int getX() {
@@ -76,11 +83,15 @@ public class Cell implements GameElement {
 		return this.value;
 	}
 
-	public void setValue(int value) {
-		this.value = value;
-		if (value > 0) {
-			this.possibleNumbers.clear();
+	public boolean setValue(int value) {
+		for (Integer possibleNumber : this.possibleNumbers) {
+			if (possibleNumber == value) {
+				this.value = value;
+				this.possibleNumbers.clear();
+				return true;
+			}
 		}
+		return false;
 	}
 
 	@Override
@@ -97,4 +108,39 @@ public class Cell implements GameElement {
 		}
 
 	}
+
+	public void clearValue() {
+		if (this.value > 0) {
+			this.value = 0;
+		}
+
+	}
+
+	@Override
+	public void addPossibleNumber(int number) {
+		if (number > 0 && !this.possibleNumbers.contains(number) && this.value == 0) {
+			this.possibleNumbers.add(number);
+		}
+	}
+
+	public List<Integer> getPossibleNumbers() {
+		return this.possibleNumbers;
+	}
+
+	public void makeAllNumbersPossible() {
+		initPossibleNumbers();
+
+	}
+
+	public void removePossibleNumbers(List<Integer> takenNumberForSection) {
+		for (Integer n : takenNumberForSection) {
+			this.removePossibleNumber(n);
+		}
+
+	}
+
+	public boolean onlyOnePossible() {
+		return (this.value == 0 && this.possibleNumbers.size() == 1);
+	}
+
 }

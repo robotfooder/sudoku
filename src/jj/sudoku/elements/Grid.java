@@ -82,4 +82,10 @@ public class Grid implements GameElement {
 
 	}
 
+	@Override
+	public void addPossibleNumber(int number) {
+		// TODO Auto-generated method stub
+
+	}
+
 }
