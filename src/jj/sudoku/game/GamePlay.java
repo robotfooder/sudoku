@@ -21,55 +21,36 @@ import jj.sudoku.graphics.GameElement;
 
 public class GamePlay {
 
-	Map<ElementType, GameElement> elementsMap = new LinkedHashMap<ElementType, GameElement>();
-	Section[] sectionArray = new Section[GameConstants.CELLS];
+	Map<ElementType, GameElement> activeElementsMap = new LinkedHashMap<ElementType, GameElement>();
 
 	private Cell prevCell = null;
 	private List<Cell> numberedCells = new ArrayList<Cell>();
-	private List<Cell> onlyOnePossibleCells = new ArrayList<Cell>();
+	private List<Cell> onlyOnePossibleValueCells = new ArrayList<Cell>();
+	private List<Cell> uniquePossibleValueInSectionCells = new ArrayList<Cell>();
+	private Grid grid;
 
 	public GamePlay() {
 
-		this.elementsMap.put(ElementType.GRID, new Grid());
-		this.elementsMap.put(ElementType.VERTICAL_ROW, new Row());
-		this.elementsMap.put(ElementType.HORIZONTAL_ROW, new Row());
-		loadSections();
-	}
-
-	private void loadSections() {
-		Grid grid = this.getGrid();
-		int row = 0;
-		int col = 0;
-		for (int n = 0; n < GameConstants.CELLS; n++) {
-			col = (n / 3) * 3;
-			row = (n % 3) * 3;
-			Cell[] sectionGrid = new Cell[GameConstants.CELLS];
-			int count = 0;
-			for (int x = col; x < col + 3; x++) {
-				for (int y = row; y < row + 3; y++) {
-					sectionGrid[count] = grid.getCell(x, y);
-					count++;
-				}
-			}
-			this.sectionArray[n] = new Section(sectionGrid);
-		}
+		// load the grid and all cells
+		this.activeElementsMap.put(ElementType.GRID, new Grid());
+		this.grid = getGrid();
 
 	}
 
 	private Grid getGrid() {
-		return (Grid) this.elementsMap.get(ElementType.GRID);
+		return (Grid) this.activeElementsMap.get(ElementType.GRID);
 	}
 
 	public void tick(MouseEvent e) {
 
 		System.out.println("X: " + e.getX() + "Y: " + e.getY());
-		Grid grid = getGrid();
-		Cell cell = grid.getCellByCoordinates(e.getX(), e.getY());
+
+		Cell cell = this.grid.getCellByCoordinates(e.getX(), e.getY());
 		if (cell != null) {
 			cell.printMe();
 			cell.setActive(true);
-			calculateAffectedCells(cell);
-			this.elementsMap.put(ElementType.ACTIVE_CELL, cell);
+			setActiveSections(cell);
+			this.activeElementsMap.put(ElementType.ACTIVE_CELL, cell);
 			if (this.prevCell == null) {
 				this.prevCell = cell;
 			} else {
@@ -79,41 +60,38 @@ public class GamePlay {
 		}
 	}
 
-	private void calculateAffectedCells(Cell cell) {
-		Grid grid = getGrid();
-		Cell[] rowArray = grid.getRow(cell, Direction.HORIZONATAL);
-		Row horRow = (Row) this.elementsMap.get(ElementType.HORIZONTAL_ROW);
-		Row vertRow = (Row) this.elementsMap.get(ElementType.VERTICAL_ROW);
-		horRow.setSectionArray(rowArray);
-		rowArray = grid.getRow(cell, Direction.VERTICAL);
-		vertRow.setSectionArray(rowArray);
-		this.elementsMap.put(ElementType.ACTIVE_SECTION, this.getActiveSection(cell));
-	}
+	private void setActiveSections(Cell cell) {
 
-	private Section getActiveSection(Cell cell) {
-		int rowSection = cell.getYArrayPos() / 3;
-		int colSection = cell.getXArrayPos() / 3;
-		int arrayPos = rowSection * 1 + 3 * colSection;
-		return this.sectionArray[arrayPos];
+		Row verticalRow = this.grid.getRow(cell, Direction.VERTICAL);
+		Row horisontalRow = this.grid.getRow(cell, Direction.HORIZONATAL);
+		Section section = this.grid.getSection(cell);
+
+		this.activeElementsMap.put(ElementType.HORIZONTAL_ROW, horisontalRow);
+		this.activeElementsMap.put(ElementType.VERTICAL_ROW, verticalRow);
+		this.activeElementsMap.put(ElementType.ACTIVE_SECTION, section);
 	}
 
 	public void drawElements(Graphics g) {
 		for (Cell cell : this.numberedCells) {
 			cell.drawMe(g, Color.black);
 		}
-		for (Map.Entry<ElementType, GameElement> entry : this.elementsMap.entrySet()) {
+		for (Map.Entry<ElementType, GameElement> entry : this.activeElementsMap.entrySet()) {
 			GameElement element = entry.getValue();
 			element.drawMe(g);
 		}
 
-		for (Cell cell : this.onlyOnePossibleCells) {
+		for (Cell cell : this.onlyOnePossibleValueCells) {
 			cell.drawMe(g, Color.MAGENTA);
+		}
+
+		for (Cell cell : this.uniquePossibleValueInSectionCells) {
+			cell.drawMe(g, Color.ORANGE);
 		}
 
 	}
 
 	public void tick(int keyValue) {
-		Cell activeCell = (Cell) this.elementsMap.get(ElementType.ACTIVE_CELL);
+		Cell activeCell = (Cell) this.activeElementsMap.get(ElementType.ACTIVE_CELL);
 
 		if (keyValue > 0) {
 			if (activeCell.setValue(keyValue)) {
@@ -133,22 +111,38 @@ public class GamePlay {
 				}
 			}
 		}
-		this.onlyOnePossibleCells.clear();
-		Grid grid = this.getGrid();
+		findInterestingCells();
+
+	}
+
+	private void findInterestingCells() {
+		findCellsWithOnePossibleValue();
+		findCellsWithUniquePossibleValueInSection();
+
+	}
+
+	private void findCellsWithUniquePossibleValueInSection() {
+		this.uniquePossibleValueInSectionCells.clear();
+		List<Cell> cells = this.grid.findUniqueCellsInSections();
+		this.uniquePossibleValueInSectionCells.addAll(cells);
+
+	}
+
+	private void findCellsWithOnePossibleValue() {
+		this.onlyOnePossibleValueCells.clear();
 		for (int x = 0; x < GameConstants.CELLS; x++) {
 			for (int y = 0; y < GameConstants.CELLS; y++) {
-				Cell cell = grid.getCell(x, y);
+				Cell cell = this.grid.getCell(x, y);
 				if (cell.onlyOnePossible()) {
-					this.onlyOnePossibleCells.add(cell);
+					this.onlyOnePossibleValueCells.add(cell);
 				}
-
 			}
 		}
 	}
 
 	private void setPossibleNumbersForCell(Cell activeCell) {
 		activeCell.makeAllNumbersPossible();
-		for (Map.Entry<ElementType, GameElement> entry : this.elementsMap.entrySet()) {
+		for (Map.Entry<ElementType, GameElement> entry : this.activeElementsMap.entrySet()) {
 			GameElement element = entry.getValue();
 			if (element instanceof SectionElement) {
 				SectionElement section = (SectionElement) element;
@@ -159,7 +153,7 @@ public class GamePlay {
 	}
 
 	private void updateAffectedCellsRemove(int number) {
-		for (Map.Entry<ElementType, GameElement> entry : this.elementsMap.entrySet()) {
+		for (Map.Entry<ElementType, GameElement> entry : this.activeElementsMap.entrySet()) {
 			GameElement element = entry.getValue();
 			element.addPossibleNumber(number);
 		}
@@ -167,7 +161,7 @@ public class GamePlay {
 	}
 
 	private void updateAffectedCellsAdd(int number) {
-		for (Map.Entry<ElementType, GameElement> entry : this.elementsMap.entrySet()) {
+		for (Map.Entry<ElementType, GameElement> entry : this.activeElementsMap.entrySet()) {
 			GameElement element = entry.getValue();
 			element.removePossibleNumber(number);
 		}

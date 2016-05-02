@@ -3,7 +3,9 @@ package jj.sudoku.elements;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jj.sudoku.constants.GameConstants;
 
@@ -67,6 +69,45 @@ public abstract class AbstractSectionElement implements SectionElement {
 			}
 		}
 		return takenNumbers;
+	}
+
+	public List<Cell> findCellsWithUniquePossibleValue() {
+		List<Cell> cells = new ArrayList<Cell>();
+		Map<Integer, Integer> uniqueValues = new HashMap<Integer, Integer>();
+		for (Cell cell : this.sectionArray) {
+			List<Integer> possibleNumbers = cell.getPossibleNumbers();
+			for (Integer possibleNumber : possibleNumbers) {
+				Integer count = uniqueValues.get(possibleNumber);
+				if (count == null) {
+					count = 1;
+				} else {
+					count++;
+				}
+				uniqueValues.put(possibleNumber, count);
+			}
+		}
+		for (Map.Entry<Integer, Integer> entry : uniqueValues.entrySet()) {
+			Integer count = entry.getValue();
+			if (count == 1) {
+				Cell cell = getCellWithPossibleValue(entry.getKey());
+				if (cell != null) {
+					cells.add(cell);
+				}
+			}
+		}
+		return cells;
+	}
+
+	private Cell getCellWithPossibleValue(Integer key) {
+		for (Cell cell : this.sectionArray) {
+			List<Integer> possibleNumbers = cell.getPossibleNumbers();
+			for (Integer possibleNumber : possibleNumbers) {
+				if (possibleNumber == key) {
+					return cell;
+				}
+			}
+		}
+		return null;
 	}
 
 }

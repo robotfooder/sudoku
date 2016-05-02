@@ -6,8 +6,8 @@ public class Row extends AbstractSectionElement {
 
 	private Color stdColor = Color.blue;
 
-	public Row() {
-		super();
+	public Row(Cell[] cells) {
+		super(cells);
 	}
 
 	@Override
