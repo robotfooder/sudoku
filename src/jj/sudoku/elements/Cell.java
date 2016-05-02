@@ -16,6 +16,7 @@ public class Cell implements GameElement {
 	boolean active = false;
 	private Color stdColor = Color.red;
 	private List<Integer> possibleNumbers = new ArrayList<Integer>();
+	private int unique;
 
 	public Cell(int x, int y) {
 		this.x = GameConstants.OFFSET + x * GameConstants.CELLSIZE;
@@ -75,7 +76,14 @@ public class Cell implements GameElement {
 	public void printMe() {
 		System.out.println("Horizontal Cell: " + (this.getX() - GameConstants.OFFSET) / GameConstants.CELLSIZE);
 		System.out.println("Vertical Cell: " + (this.getY() - GameConstants.OFFSET) / GameConstants.CELLSIZE);
-		System.out.println("Valid numbers: " + this.possibleNumbers.toString());
+		if (!this.possibleNumbers.isEmpty()) {
+			System.out.println("Valid numbers: " + this.possibleNumbers.toString());
+		} else {
+			System.out.println("Value: " + this.value);
+		}
+		if (this.unique > 0) {
+			System.out.println("Unique number for section: " + this.unique);
+		}
 
 	}
 
@@ -141,6 +149,11 @@ public class Cell implements GameElement {
 
 	public boolean onlyOnePossible() {
 		return (this.value == 0 && this.possibleNumbers.size() == 1);
+	}
+
+	public void setUniqueValueForSection(int value) {
+		this.unique = value;
+
 	}
 
 }

@@ -92,6 +92,7 @@ public abstract class AbstractSectionElement implements SectionElement {
 				Cell cell = getCellWithPossibleValue(entry.getKey());
 				if (cell != null) {
 					cells.add(cell);
+					cell.setUniqueValueForSection(entry.getKey());
 				}
 			}
 		}

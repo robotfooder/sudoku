@@ -80,12 +80,11 @@ public class GamePlay {
 			element.drawMe(g);
 		}
 
-		for (Cell cell : this.onlyOnePossibleValueCells) {
-			cell.drawMe(g, Color.MAGENTA);
-		}
-
 		for (Cell cell : this.uniquePossibleValueInSectionCells) {
 			cell.drawMe(g, Color.ORANGE);
+		}
+		for (Cell cell : this.onlyOnePossibleValueCells) {
+			cell.drawMe(g, Color.MAGENTA);
 		}
 
 	}
